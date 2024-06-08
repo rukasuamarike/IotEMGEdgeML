@@ -4,8 +4,8 @@ import numpy as np
 import sys
 
 # Replace 'your_file.csv' with the actual path to your CSV file
+# python plot.py fingertap
 filename = f"{sys.argv[1]}.csv"
-
 # Read the CSV data using pandas
 try:
     df = pd.read_csv(filename, header=0)  # Assuming headers are present (row 0)
@@ -35,6 +35,5 @@ plt.ylabel(
 plt.title(f"EMG Signals over Time from '{filename}'")
 plt.legend()
 plt.grid(True)
-
 # Display the plot
 plt.show()
