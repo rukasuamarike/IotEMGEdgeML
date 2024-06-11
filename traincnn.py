@@ -30,8 +30,6 @@ except FileNotFoundError:
 
 X = df.iloc[:, 0:3].values
 Y = df.iloc[:, 3].values
-
-
 X = X.reshape((X.shape[0], 1, 1, 3))
 
 Y = to_categorical(Y)
