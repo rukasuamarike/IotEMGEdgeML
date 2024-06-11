@@ -15,14 +15,13 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 import joblib
 
+#pip install numpy pandas scikit-learn tensorflow   
 
-# Assuming you have a trained model (e.g., svc_model)
 
 
 filename = "traindata.csv"
-# Read the CSV data using pandas
 try:
-    df = pd.read_csv(filename, header=0)  # Assuming headers are present (row 0)
+    df = pd.read_csv(filename, header=0)  
 except FileNotFoundError:
     print(f"Error: File '{filename}' not found!")
     exit()
@@ -85,26 +84,20 @@ def livepreprocess(matrix):
         n_samples, n_channels, window_size = matrix.shape
         matrix = matrix.reshape((n_samples * n_channels, window_size))
     emg_data_scaled = scaler.fit_transform(matrix)
-    # Apply PCA on scaled data
     pca = PCA(n_components=3)
     emg_data_pca = pca.fit_transform(emg_data_scaled)
     return emg_data_pca
 
 def real_time_inference(input_array):
-    # Check if the input_array is of shape (3, 10)
     if input_array.shape != (3, 10):
         raise ValueError("Input array must be of shape (3, 10)")
     
-    # Reshape input to match model's expected input shape
     input_array = input_array.reshape((1, 3, 10, 1))
     
-    # Perform inference
     prediction = model.predict(input_array)
     
-    # Return the predicted class
     return np.argmax(prediction, axis=1)[0]
 
-# Example of real-time inference
 preprocessbuff = np.zeros((3, 10))
 while True:
     line = read()
