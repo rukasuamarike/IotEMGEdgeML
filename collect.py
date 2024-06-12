@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 
-arduino = serial.Serial(port="/dev/tty.usbmodem21301", baudrate=115200, timeout=0.1)
+arduino = serial.Serial(port="COM3", baudrate=115200, timeout=0.1)
 
 serialbuff = np.zeros((3, 10))
 
@@ -71,7 +71,7 @@ try:
                 # predict = classify2(preprocess)
                 trainer = 1 if (trainertime < period / 2) else 0
                 print(trainertime)
-                label = "close" if trainer == 0 else "open"
+                label = trainer
                 print(label)
 
                 entry = f"{preprocess[0,:][0]},{preprocess[0,:][1]},{preprocess[0,:][2]},{label}"

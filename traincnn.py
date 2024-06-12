@@ -45,14 +45,14 @@ model = Sequential([
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(X_train, Y_train, epochs=10, validation_data=(X_test, Y_test))
+model.fit(X_train, Y_train, epochs=15, validation_data=(X_test, Y_test))
 
 loss, accuracy = model.evaluate(X_test, Y_test)
 print(f'Loss: {loss}, Accuracy: {accuracy}')
 
 
 
-arduino = serial.Serial(port="/dev/tty.usbmodem21201", baudrate=115200, timeout=0.1)
+arduino = serial.Serial(port="COM3", baudrate=115200, timeout=0.1)
 
 serialbuff = np.zeros((3, 10))
 
@@ -64,15 +64,6 @@ def read():
         print(data)  # Print the received data
 
     return data
-
-
-def classify(matrix):
-    threshold = 0.63
-
-    open_hand = matrix.sum() / 10 > threshold
-    data = "open" if open_hand else "closed"
-    return data
-
 
 def livepreprocess(matrix):
     scaler = StandardScaler()
@@ -90,34 +81,38 @@ def real_time_inference(input_array):
     if input_array.shape != (3, 10):
         raise ValueError("Input array must be of shape (3, 10)")
     
-    input_array = input_array.reshape((1, 3, 10, 1))
+    input_array = input_array.reshape((10,1, 1, 3))
     
     prediction = model.predict(input_array)
     
     return np.argmax(prediction, axis=1)[0]
 
 preprocessbuff = np.zeros((3, 10))
+pp=0
 while True:
     line = read()
+    pp+=1
+    if(pp>200):
+        pp=0
     if not (line == None):
 
         new_data = np.asmatrix([[float(idx)] for idx in line.split(",")])
 
         serialbuff = np.append(serialbuff[:, 1:], (new_data), axis=1)
-        print(new_data)
-        print(serialbuff.shape)
+        #print(new_data)
+        #print(serialbuff.shape)
         
         # gets 3x10 emg data
         preprocess = livepreprocess(np.asarray(serialbuff))
-        new_data2 = preprocess[0, 1:].reshape((3, 1))
-        print(pd.DataFrame(new_data))
-        print(pd.DataFrame(new_data2))
+        new_data2 = preprocess[:,0].reshape((3, 1))
+        #print(pd.DataFrame(new_data))
         
-        preprocessbuff = np.append(preprocessbuff[:, 1:], (preprocess[0,:]), axis=1)
-        print(pd.DataFrame(preprocess[0,:]))
-        print(pd.DataFrame(preprocessbuff))
-        predicted_class = real_time_inference(preprocessbuff)
-        print(f'Predicted Class: {predicted_class}')
+        preprocessbuff = np.append(preprocessbuff[:, 1:], (new_data2), axis=1)
+        #print(pd.DataFrame(preprocessbuff))
+        X = preprocessbuff.reshape((1, 3, 10, 1))
+        if(pp%4==0):
+            predicted_class = real_time_inference(preprocessbuff)
+            print(f'Predicted Class: {predicted_class}')
         #g2 = pd.DataFrame({'emg1': g1[0][0], 'emg2': g1[0][1],'emg3': g1[0][2]})
         # g2 = {'emg1': [1, 2, 3], 'emg2': [4, 5, 6],'emg3': []}
         # {'emg1': [1, 2, 3], 'emg2': [4, 5, 6],'emg3'}
