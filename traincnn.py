@@ -34,7 +34,7 @@ X = X.reshape((X.shape[0], 1, 1, 3))
 
 Y = to_categorical(Y)
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
 
 model = Sequential([
     Conv2D(32, kernel_size=(1, 1), activation='relu', input_shape=(1, 1, 3)),

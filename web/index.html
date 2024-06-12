@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WebSocket with p5.js</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    </head>
+
+    <body>
+        <script>
+            let socket;
+
+            function setup() {
+                createCanvas(400, 400);
+                background(200);
+
+                // Connect to the external WebSocket server
+                socket = new WebSocket('ws://localhost:5000/g');
+
+                // Called when the connection is opened
+                socket.onopen = function (event) {
+                    console.log('Connected to WebSocket server');
+                    // Example: Send a message to the server
+                    socket.send("sss")
+                    socket.send(JSON.stringify({message: 'Hello, server!'}));
+                };
+
+                // Called when a message is received from the server
+                socket.onmessage = function (event) {
+                    let message = JSON.parse(event.data);
+                    console.log('Received: ', message);
+
+                    // Do something with the received data
+                    background(200);
+                    textSize(32);
+                    text(message.data, 10, height / 2);
+                };
+
+                // Called when the connection is closed
+                socket.onclose = function (event) {
+                    console.log('Disconnected from WebSocket server');
+                };
+
+                // Called when there's an error with the connection
+                socket.onerror = function (error) {
+                    console.log('WebSocket Error: ' + error);
+                };
+            }
+
+            function draw() {
+                // Your drawing code here
+            }
+        </script>
+    </body>
+
+</html>
