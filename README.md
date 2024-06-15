@@ -5,8 +5,8 @@ The data collection program prompts the user to follow prompts to open or close 
 the gesture measured.
   
 ## Preprocessing:
-[link]("./collect.py")
-<src href="./traincnn.py">
+[collect]("./collect.py")
+[train]("./traincnn.py")
 Principal component analysis (PCA) for feature extraction. 
   
 ## Training:
@@ -16,5 +16,5 @@ Labeled and preprocessed data were stored in CSV files and parsed into training 
 Testing Accuracy in real time was calculated similarly to training where users follow the expected label during live inference and compare it with the model’s predicted output
   
 ## Plotting:
-<src href="./plot.py">
+[plot]("./plot.py")
 Visualize CSV output with matplotlib
