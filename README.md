@@ -10,7 +10,7 @@ Sklearn, pandas, numpy, and pyserial
 ## Main Procedure:
 
 ### Sampling:
-[collect]("./collect.ino")
+[sample]("./normalizer.ino")
 The data collection program prompts the user to follow prompts to open or close the hand with varying timings depending on
 the gesture measured.
 
