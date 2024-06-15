@@ -11,8 +11,7 @@ Sklearn, pandas, numpy, and pyserial
 
 ### Sampling:
 [sample]("./normalizer.ino")
-The data collection program prompts the user to follow prompts to open or close the hand with varying timings depending on
-the gesture measured.
+Starts serial port communication with the PC
 
 ### Collection:
 [collect]("./collect.py")
