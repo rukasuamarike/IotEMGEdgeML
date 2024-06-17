@@ -35,7 +35,7 @@ X = X.reshape((X.shape[0], 1, 1, 3))
 Y = to_categorical(Y)
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
-
+# 3x10 => (32)ReLU x flatten x (128)ReLU x (2)softmax
 model = Sequential([
     Conv2D(32, kernel_size=(1, 1), activation='relu', input_shape=(1, 1, 3)),
     Flatten(),
@@ -87,13 +87,17 @@ def real_time_inference(input_array):
     
     return np.argmax(prediction, axis=1)[0]
 
+netAccuracy = 0
+numSample = 0
+expected = 0
 preprocessbuff = np.zeros((3, 10))
-pp=0
+tt=0
+period = 200
 while True:
     line = read()
-    pp+=1
-    if(pp>200):
-        pp=0
+    tt+=1
+    if(tt>200):
+        tt=0
     if not (line == None):
 
         new_data = np.asmatrix([[float(idx)] for idx in line.split(",")])
@@ -108,11 +112,20 @@ while True:
         #print(pd.DataFrame(new_data))
         
         preprocessbuff = np.append(preprocessbuff[:, 1:], (new_data2), axis=1)
-        #print(pd.DataFrame(preprocessbuff))
+        
+        # for realtime eval
+        expected = 1 if (tt < period / 2) else 0
+        print(f'copy hand pose: {print("open" if expected else "closed")}')
         X = preprocessbuff.reshape((1, 3, 10, 1))
-        if(pp%4==0):
+        if(tt%4==0):
             predicted_class = real_time_inference(preprocessbuff)
-            print(f'Predicted Class: {predicted_class}')
+            
+            if(expected == predicted_class):
+                netAccuracy+=1
+            netsample+=1
+            print(f'Predicted: {predicted_class} Expected:{expected}')
+            print(f'Trained ACC: {accuracy}')
+            print(f'Realtime ACC: {netAccuracy/netsample}')
         #g2 = pd.DataFrame({'emg1': g1[0][0], 'emg2': g1[0][1],'emg3': g1[0][2]})
         # g2 = {'emg1': [1, 2, 3], 'emg2': [4, 5, 6],'emg3': []}
         # {'emg1': [1, 2, 3], 'emg2': [4, 5, 6],'emg3'}
